@@ -1,8 +1,8 @@
-from Game import Game
+from GameEngine import GameEngine
 
 def main():
     print("WELCOME IM MY CHESS GAME  ---- by Theo GUEURET")
-    myGame = Game()
+    myGame = GameEngine()
     #myGame.printAllPieces()
     #myGame.printAllSquares()
     myGame.printBoard()

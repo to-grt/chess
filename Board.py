@@ -96,7 +96,7 @@ class Board:
         while i < n:
             print("-",end="")
             i+=1
-        print("\n")
+        print("")
         for axe in self.squares:
             for square in axe:
                 print("|", end="")
@@ -107,7 +107,7 @@ class Board:
             while i < n:
                 print("-",end="")
                 i+=1
-            print("\n")
+            print("")
 
     def findSquare(self, pName):
         for axe in self.squares:

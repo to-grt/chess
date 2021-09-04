@@ -1,5 +1,3 @@
-
-
 class Square:
 
     def __init__(self, pName, pAbscissa, pOrdinate, pColor, pIsOccuped):
