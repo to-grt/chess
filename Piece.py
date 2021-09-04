@@ -10,6 +10,7 @@ class Piece:
         self.isAlive =  pIsAlive
         self.square =   pSquare
         self.nbMoves =  0
+        self.movePattern = self.definePattern()
         self.squareIsOccuped()
 
     def squareIsOccuped(self):      # when a piece is moved
@@ -33,7 +34,7 @@ class Piece:
         infos = "my role : " + self.role + "\nmy color : " + self.color + "\nalive : " + str(self.isAlive) + "\nmy square : " + self.square.name + "\n\n"
         return infos
 
-    def getPossibleMoves(self):
+    def definePattern(self):
 
         list = []
 

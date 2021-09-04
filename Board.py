@@ -1,10 +1,13 @@
 from Square import Square
+from Piece import Piece
 
 class Board:
 
     def __init__(self):
         self.squares = self.createBoard()
+        self.pieces =   self.createPieces()
 
+    #creates every square of the board cf Square.py
     def createBoard(self):
         squares = [[0 for x in range(8)] for y in range(8)]
 
@@ -90,6 +93,56 @@ class Board:
 
         return squares
 
+    #creates every piece od the board, cf Piece.py
+    def createPieces(self):
+
+        pieces = []
+        #WHITE PIECES
+        pieces.append( Piece("PW1", "pawn", "white", True, self.squares[0][1]) )
+        pieces.append( Piece("PW2", "pawn", "white", True, self.squares[1][1]) )
+        pieces.append( Piece("PW3", "pawn", "white", True, self.squares[2][1]) )
+        pieces.append( Piece("PW4", "pawn", "white", True, self.squares[3][1]) )
+        pieces.append( Piece("PW5", "pawn", "white", True, self.squares[4][1]) )
+        pieces.append( Piece("PW6", "pawn", "white", True, self.squares[5][1]) )
+        pieces.append( Piece("PW7", "pawn", "white", True, self.squares[6][1]) )
+        pieces.append( Piece("PW8", "pawn", "white", True, self.squares[7][1]) )
+
+        pieces.append( Piece("RW1", "rook",     "white", True, self.squares[0][0]) )
+        pieces.append( Piece("KW1", "knight",   "white", True, self.squares[1][0]) )
+        pieces.append( Piece("BW1", "bishop",   "white", True, self.squares[2][0]) )
+        pieces.append( Piece("QW1", "queen",    "white", True, self.squares[3][0]) )
+        pieces.append( Piece("KW1", "king",     "white", True, self.squares[4][0]) )
+        pieces.append( Piece("BW2", "bishop",   "white", True, self.squares[5][0]) )
+        pieces.append( Piece("KW2", "knight",   "white", True, self.squares[6][0]) )
+        pieces.append( Piece("RW2", "rook",     "white", True, self.squares[7][0]) )
+
+        #BLACK PIECES
+        pieces.append( Piece("PB1", "pawn", "black", True, self.squares[0][6]) )
+        pieces.append( Piece("PB2", "pawn", "black", True, self.squares[1][6]) )
+        pieces.append( Piece("PB3", "pawn", "black", True, self.squares[2][6]) )
+        pieces.append( Piece("PB4", "pawn", "black", True, self.squares[3][6]) )
+        pieces.append( Piece("PB5", "pawn", "black", True, self.squares[4][6]) )
+        pieces.append( Piece("PB6", "pawn", "black", True, self.squares[5][6]) )
+        pieces.append( Piece("PB7", "pawn", "black", True, self.squares[6][6]) )
+        pieces.append( Piece("PB8", "pawn", "black", True, self.squares[7][6]) )
+
+        pieces.append( Piece("RB1", "rook",     "black", True, self.squares[0][7]) )
+        pieces.append( Piece("KB1", "knight",   "black", True, self.squares[1][7]) )
+        pieces.append( Piece("BB1", "bishop",   "black", True, self.squares[2][7]) )
+        pieces.append( Piece("QB1", "queen",    "black", True, self.squares[3][7]) )
+        pieces.append( Piece("KB1", "king",     "black", True, self.squares[4][7]) )
+        pieces.append( Piece("BB2", "bishop",   "black", True, self.squares[5][7]) )
+        pieces.append( Piece("KB2", "knight",   "black", True, self.squares[6][7]) )
+        pieces.append( Piece("RB2", "rook",     "black", True, self.squares[7][7]) )
+        return pieces
+
+    #prints every piece of the board (dead or alive)
+    def printAllPieces(self):
+
+        for piece in self.pieces:
+            print( piece.name, " : my infos are :\n", piece.getInfos() )
+
+    #prints every quare of the board
     def printBoard(self):
         n = 25
         i = 0
@@ -109,11 +162,204 @@ class Board:
                 i+=1
             print("")
 
+    #finds a square from a name
     def findSquare(self, pName):
         for axe in self.squares:
             for square in axe:
                 if pName == square.name:
                     return self.squares[axe][square]
     
-    def getSquare(self, pAbscissa, pOrdinate):
+    #returns a square from coordinates
+    def getSquareFromCoords(self, pAbscissa, pOrdinate):
         return self.squares[pAbscissa-1][pOrdinate-1]
+
+    #this function is quite useful, it allows to get a new square from a specific square, a x deviation and a y deviation for exemple:
+    #  input =>  square A1, 1, 1   output => square b2
+    #return None otherwise
+    def getSquareFromSquare(self, pSquare, pX, pY):
+        x = pSquare.abscissa
+        y = pSquare.ordinate
+        xFinal = x + pX
+        yFinal = y + pY
+        if( xFinal <= 0 or xFinal > 8 or yFinal <= 0 or yFinal > 8): return None
+        else: return self.getSquareFromCoords(xFinal, yFinal)
+
+    #returns a the piece present on the given square, otherwise, returns None
+    def pieceOnSquare(self, pSquare):
+        for piece in self.pieces:
+            if piece.square == pSquare: return piece
+        return None
+    
+    def checkIfPieceMoves(self, pPiece):
+        return False
+
+    #Finds the moves for a given piece
+    def findMoves(self, pPiece):
+
+        if self.checkIfPieceMoves(pPiece): return None
+        
+        if pPiece.role == "pawn":
+            return self.pawnMoves(pPiece)
+
+        elif pPiece.role == "rook":
+            return self.rookMoves(pPiece)
+
+        elif pPiece.role == "knight":
+            return self.knightMoves(pPiece)
+
+        elif pPiece.role == "bishop":
+            return self.bishopMoves(pPiece)
+
+        elif pPiece.role == "queen":
+            return self.queenMoves(pPiece)
+
+        elif pPiece.role == "king":
+            return self.kingMoves(pPiece)
+
+    #linked to findMoves(self, pPiece)
+    def pawnMoves(self, pPawn):
+        movesList = []
+
+        observedSquare = self.getSquareFromSquare(pPawn.square, 0, 1)
+        if observedSquare != None and self.checkObservedSquare(pPawn, observedSquare, False, False)[0]: movesList.append( (0,1) )
+
+        if movesList != []: #because a pawn can only moves 2 square if the first square ahead of it is available
+            observedSquare = self.getSquareFromSquare(pPawn.square, 0, 2)
+            if observedSquare != None and self.checkObservedSquare(pPawn, observedSquare, False, True)[0]: movesList.append( (0,2) )
+
+        observedSquare = self.getSquareFromSquare(pPawn.square, -1, 1)
+        if observedSquare != None and self.checkObservedSquare(pPawn, observedSquare, True, False)[0] and observedSquare.isOccuped: movesList.append( (-1,1) )
+
+        observedSquare = self.getSquareFromSquare(pPawn.square, 1, 1)
+        if observedSquare != None and self.checkObservedSquare(pPawn, observedSquare, True, False)[0] and observedSquare.isOccuped: movesList.append( (1,1) )
+
+        return movesList
+
+    #linked to findMoves(self, pPiece)
+    def rookMoves(self, pRook):
+        movesList = []
+
+        compteur = 1
+        while( compteur < 8): #I defined the limit to 8 even if it might overflow because once 1 square is overflowing, the loop stops
+            observedSquare = self.getSquareFromSquare(pRook.square, compteur, 0)
+            checkObservedSquare = self.checkObservedSquare(pRook, observedSquare, True, False)
+            if observedSquare != None and checkObservedSquare[0]: movesList.append( (compteur,0) )
+            if not checkObservedSquare[1]: break
+            compteur+=1
+
+        compteur = 1
+        while( compteur < 8): #I defined the limit to 8 even if it might overflow because once 1 square is overflowing, the loop stops
+            observedSquare = self.getSquareFromSquare(pRook.square, -compteur, 0)
+            checkObservedSquare = self.checkObservedSquare(pRook, observedSquare, True, False)
+            if observedSquare != None and checkObservedSquare[0]: movesList.append( (-compteur,0) )
+            if not checkObservedSquare[1]: break
+            compteur+=1
+
+        compteur = 1
+        while( compteur < 8): #I defined the limit to 8 even if it might overflow because once 1 square is overflowing, the loop stops
+            observedSquare = self.getSquareFromSquare(pRook.square, 0, compteur)
+            checkObservedSquare = self.checkObservedSquare(pRook, observedSquare, True, False)
+            if observedSquare != None and checkObservedSquare[0]: movesList.append( (0,compteur) )
+            if not checkObservedSquare[1]: break
+            compteur+=1
+
+        compteur = 1
+        while( compteur < 8): #I defined the limit to 8 even if it might overflow because once 1 square is overflowing, the loop stops
+            observedSquare = self.getSquareFromSquare(pRook.square, 0, -compteur)
+            checkObservedSquare = self.checkObservedSquare(pRook, observedSquare, True, False)
+            if observedSquare != None and checkObservedSquare[0]: movesList.append( (0,-compteur) )
+            if not checkObservedSquare[1]: break
+            compteur+=1
+
+        return movesList
+
+    #linked to findMoves(self, pPiece)
+    def knightMoves(self, pKnight):
+        movesList = []
+
+        observedSquare = self.getSquareFromSquare(pKnight.square, 1, 2)
+        if observedSquare != None and self.checkObservedSquare(pKnight, observedSquare, True, False)[0]: movesList.append( (1,2) )
+
+        observedSquare = self.getSquareFromSquare(pKnight.square, 2, 1)
+        if observedSquare != None and self.checkObservedSquare(pKnight, observedSquare, True, False)[0]: movesList.append( (2,1) )
+
+        observedSquare = self.getSquareFromSquare(pKnight.square, 2, -1)
+        if observedSquare != None and self.checkObservedSquare(pKnight, observedSquare, True, False)[0]: movesList.append( (2,-1) )
+
+        observedSquare = self.getSquareFromSquare(pKnight.square, 1, -2)
+        if observedSquare != None and self.checkObservedSquare(pKnight, observedSquare, True, False)[0]: movesList.append( (1,-2) )
+
+        observedSquare = self.getSquareFromSquare(pKnight.square, -1, -2)
+        if observedSquare != None and self.checkObservedSquare(pKnight, observedSquare, True, False)[0]: movesList.append( (-1,-2) )
+
+        observedSquare = self.getSquareFromSquare(pKnight.square, -2, -1)
+        if observedSquare != None and self.checkObservedSquare(pKnight, observedSquare, True, False)[0]: movesList.append( (-2,-1) )
+
+        observedSquare = self.getSquareFromSquare(pKnight.square, -2, 1)
+        if observedSquare != None and self.checkObservedSquare(pKnight, observedSquare, True, False)[0]: movesList.append( (-2,1) )
+
+        observedSquare = self.getSquareFromSquare(pKnight.square, -1, 2)
+        if observedSquare != None and self.checkObservedSquare(pKnight, observedSquare, True, False)[0]: movesList.append( (-1,2) )
+
+        return movesList
+
+    #linked to findMoves(self, pPiece)
+    def bishopMoves(self, pBishop):
+        movesList = []
+
+        compteur = 1
+        while( compteur < 8): #I defined the limit to 8 even if it might overflow because once 1 square is overflowing, the loop stops
+            observedSquare = self.getSquareFromSquare(pBishop.square, compteur, compteur)
+            checkObservedSquare = self.checkObservedSquare(pBishop, observedSquare, True, False)
+            if observedSquare != None and checkObservedSquare[0]: movesList.append( (compteur,compteur) )
+            if not checkObservedSquare[1]: break
+            compteur+=1
+
+        compteur = 1
+        while( compteur < 8): #I defined the limit to 8 even if it might overflow because once 1 square is overflowing, the loop stops
+            observedSquare = self.getSquareFromSquare(pBishop.square, compteur, -compteur)
+            checkObservedSquare = self.checkObservedSquare(pBishop, observedSquare, True, False)
+            if observedSquare != None and checkObservedSquare[0]: movesList.append( (compteur,-compteur) )
+            if not checkObservedSquare[1]: break
+            compteur+=1
+
+        compteur = 1
+        while( compteur < 8): #I defined the limit to 8 even if it might overflow because once 1 square is overflowing, the loop stops
+            observedSquare = self.getSquareFromSquare(pBishop.square, -compteur, compteur)
+            checkObservedSquare = self.checkObservedSquare(pBishop, observedSquare, True, False)
+            if observedSquare != None and checkObservedSquare[0]: movesList.append( (-compteur,compteur) )
+            if not checkObservedSquare[1]: break
+            compteur+=1
+
+        compteur = 1
+        while( compteur < 8): #I defined the limit to 8 even if it might overflow because once 1 square is overflowing, the loop stops
+            observedSquare = self.getSquareFromSquare(pBishop.square, -compteur, -compteur)
+            checkObservedSquare = self.checkObservedSquare(pBishop, observedSquare, True, False)
+            if observedSquare != None and checkObservedSquare[0]: movesList.append( (-compteur,-compteur) )
+            if not checkObservedSquare[1]: break
+            compteur+=1
+
+        return movesList
+
+    #linked to findMoves(self, pPiece)
+    def queenMoves(self, pQueen):
+        movesList = self.rookMoves(pQueen) + self.bishopMoves(pQueen)
+        return movesList
+
+    #linked to findMoves(self, pPiece)
+    def kingMoves(self, pKing):
+        movesList = []
+        return movesList
+
+    #this function returns a boolean, true if the piece can go the observedSquare, False otherwise. 
+    #pCanEat define the capability of the piece to 'eat' another piece on the given observeSquare.
+    #pNeedsNoPreviousMove is used for certain peice : when it's on true, we check if the piece has move already (king's castling or pawn rush)
+    #returns 2 boolean, #1 can go on that square, #2 can continue his way?
+    def checkObservedSquare(self, pPiece, pObservedSquare, pCanEat, pNeedsNoPreviousMove):        
+        if pNeedsNoPreviousMove and pPiece.nbMoves != 0: return (False,False)  #for king's castle and pawn's rush
+        pieceObservedSquare = self.pieceOnSquare(pObservedSquare)
+        if pieceObservedSquare == None: return (True,True)     #check if there a piece on the square, if no, can move
+        if pieceObservedSquare.color == pPiece.color or not pCanEat: return (False, False)      #check if the piece on the square has the same color or if the pieceObserved can eat, if so, can't move
+        else: return (True,False)     #here, the piece can eat, and the observedPiece hasnt the same color
+
+

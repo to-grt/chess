@@ -9,6 +9,5 @@ class Square:
         self.isOccuped =    pIsOccuped
 
     def getInfos(self):
-
         infos = "my abscissa : " + str(self.abscissa) + "\nmy ordinate : " + str(self.ordinate) + "\nmy color : " + self.color + "\noccupated : " + str(self.isOccuped) + "\n\n"
         return infos
