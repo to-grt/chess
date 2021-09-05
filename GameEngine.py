@@ -19,7 +19,7 @@ class GameEngine:
         return    
 
     def findMoves(self, pPiece):
-        return self.board.findMoves(pPiece)
+        return self.board.findMoves(pPiece, True)
 
     def changePlayer(self, pPlayer):
         if( pPlayer == "white"): return "black"

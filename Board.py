@@ -108,12 +108,12 @@ class Board:
         pieces.append( Piece("PW8", "pawn", "white", True, self.squares[7][1]) )
 
         pieces.append( Piece("RW1", "rook",     "white", True, self.squares[0][0]) )
-        pieces.append( Piece("KW1", "knight",   "white", True, self.squares[1][0]) )
+        pieces.append( Piece("CW1", "knight",   "white", True, self.squares[1][0]) )
         pieces.append( Piece("BW1", "bishop",   "white", True, self.squares[2][0]) )
         pieces.append( Piece("QW1", "queen",    "white", True, self.squares[3][0]) )
         pieces.append( Piece("KW1", "king",     "white", True, self.squares[4][0]) )
         pieces.append( Piece("BW2", "bishop",   "white", True, self.squares[5][0]) )
-        pieces.append( Piece("KW2", "knight",   "white", True, self.squares[6][0]) )
+        pieces.append( Piece("CW2", "knight",   "white", True, self.squares[6][0]) )
         pieces.append( Piece("RW2", "rook",     "white", True, self.squares[7][0]) )
 
         #BLACK PIECES
@@ -127,12 +127,12 @@ class Board:
         pieces.append( Piece("PB8", "pawn", "black", True, self.squares[7][6]) )
 
         pieces.append( Piece("RB1", "rook",     "black", True, self.squares[0][7]) )
-        pieces.append( Piece("KB1", "knight",   "black", True, self.squares[1][7]) )
+        pieces.append( Piece("CB1", "knight",   "black", True, self.squares[1][7]) )
         pieces.append( Piece("BB1", "bishop",   "black", True, self.squares[2][7]) )
         pieces.append( Piece("QB1", "queen",    "black", True, self.squares[3][7]) )
         pieces.append( Piece("KB1", "king",     "black", True, self.squares[4][7]) )
         pieces.append( Piece("BB2", "bishop",   "black", True, self.squares[5][7]) )
-        pieces.append( Piece("KB2", "knight",   "black", True, self.squares[6][7]) )
+        pieces.append( Piece("CB2", "knight",   "black", True, self.squares[6][7]) )
         pieces.append( Piece("RB2", "rook",     "black", True, self.squares[7][7]) )
         return pieces
 
@@ -190,164 +190,200 @@ class Board:
             if piece.square == pSquare: return piece
         return None
     
-    def checkIfPieceMoves(self, pPiece):
+    def kingInCheck(self, pPiece, pObservedSquare):
+
+        if pPiece.color == "white": king = self.pieces[12]
+        else : king = self.pieces[28]
+
+        memSquare = pPiece.square
+        #print("right before 1\n" + pPiece.name + " : " + str(pPiece.square.abscissa) + "," + str(pPiece.square.ordinate) + " => " + str(pObservedSquare))
+        pPiece.pieceSimMoves(pObservedSquare)
+
+        for piece in self.pieces:
+            if piece.color != pPiece.color and piece.square.nbPiece == 1:
+                moves = self.findMoves(piece, False)
+                for move in moves:
+                    if piece.square.abscissa + move[0] == king.square.abscissa and piece.square.ordinate + move[1] == king.square.ordinate: 
+                        pPiece.pieceSimMoves(memSquare)
+                        return True
+        pPiece.pieceSimMoves(memSquare)
         return False
 
-    #Finds the moves for a given piece
-    def findMoves(self, pPiece):
-
-        if self.checkIfPieceMoves(pPiece): return None
-        
+    #Finds the moves for a given piece, checkIfCheck diferenciate we check if the move include own-king check
+    def findMoves(self, pPiece, checkIfCheck):
+       
         if pPiece.role == "pawn":
-            return self.pawnMoves(pPiece)
+            return self.pawnMoves(pPiece, checkIfCheck)
 
         elif pPiece.role == "rook":
-            return self.rookMoves(pPiece)
+            return self.rookMoves(pPiece, checkIfCheck)
 
         elif pPiece.role == "knight":
-            return self.knightMoves(pPiece)
+            return self.knightMoves(pPiece, checkIfCheck)
 
         elif pPiece.role == "bishop":
-            return self.bishopMoves(pPiece)
+            return self.bishopMoves(pPiece, checkIfCheck)
 
         elif pPiece.role == "queen":
-            return self.queenMoves(pPiece)
+            return self.queenMoves(pPiece, checkIfCheck)
 
         elif pPiece.role == "king":
-            return self.kingMoves(pPiece)
+            return self.kingMoves(pPiece, checkIfCheck)
 
     #linked to findMoves(self, pPiece)
-    def pawnMoves(self, pPawn):
+    def pawnMoves(self, pPawn, pCheckIfCheck):
+        if pPawn.color == "white": signColor = 1
+        else: signColor = -1
         movesList = []
 
-        observedSquare = self.getSquareFromSquare(pPawn.square, 0, 1)
-        if observedSquare != None and self.checkObservedSquare(pPawn, observedSquare, False, False)[0]: movesList.append( (0,1) )
+        observedSquare = self.getSquareFromSquare(pPawn.square, 0, signColor*1)
+        if observedSquare != None:
+            if self.checkObservedSquare(pPawn, observedSquare, False, False, pCheckIfCheck)[0]: movesList.append( (0,signColor*1) )
 
         if movesList != []: #because a pawn can only moves 2 square if the first square ahead of it is available
-            observedSquare = self.getSquareFromSquare(pPawn.square, 0, 2)
-            if observedSquare != None and self.checkObservedSquare(pPawn, observedSquare, False, True)[0]: movesList.append( (0,2) )
+            observedSquare = self.getSquareFromSquare(pPawn.square, 0, signColor*2)
+            if observedSquare != None:
+                if self.checkObservedSquare(pPawn, observedSquare, False, True, pCheckIfCheck)[0]: movesList.append( (0,signColor*2) )
 
-        observedSquare = self.getSquareFromSquare(pPawn.square, -1, 1)
-        if observedSquare != None and self.checkObservedSquare(pPawn, observedSquare, True, False)[0] and observedSquare.isOccuped: movesList.append( (-1,1) )
+        observedSquare = self.getSquareFromSquare(pPawn.square, -1, signColor*1)
+        if observedSquare != None:
+            if self.checkObservedSquare(pPawn, observedSquare, True, False, pCheckIfCheck)[0] and observedSquare.isOccuped: movesList.append( (-1,signColor*1) )
 
-        observedSquare = self.getSquareFromSquare(pPawn.square, 1, 1)
-        if observedSquare != None and self.checkObservedSquare(pPawn, observedSquare, True, False)[0] and observedSquare.isOccuped: movesList.append( (1,1) )
+        observedSquare = self.getSquareFromSquare(pPawn.square, 1, signColor*1)
+        if observedSquare != None:
+            if self.checkObservedSquare(pPawn, observedSquare, True, False, pCheckIfCheck)[0] and observedSquare.isOccuped: movesList.append( (1,signColor*1) )
 
         return movesList
 
     #linked to findMoves(self, pPiece)
-    def rookMoves(self, pRook):
+    def rookMoves(self, pRook, pCheckIfCheck):
         movesList = []
 
         compteur = 1
-        while( compteur < 8): #I defined the limit to 8 even if it might overflow because once 1 square is overflowing, the loop stops
+        while(compteur < 8): #I defined the limit to 8 even if it might overflow because once 1 square is overflowing, the loop stops
             observedSquare = self.getSquareFromSquare(pRook.square, compteur, 0)
-            checkObservedSquare = self.checkObservedSquare(pRook, observedSquare, True, False)
-            if observedSquare != None and checkObservedSquare[0]: movesList.append( (compteur,0) )
-            if not checkObservedSquare[1]: break
+            if observedSquare != None:
+                checkObservedSquare = self.checkObservedSquare(pRook, observedSquare, True, False, pCheckIfCheck)
+                if checkObservedSquare[0]: movesList.append( (compteur,0) )
+                if not checkObservedSquare[1]: break
             compteur+=1
 
         compteur = 1
         while( compteur < 8): #I defined the limit to 8 even if it might overflow because once 1 square is overflowing, the loop stops
             observedSquare = self.getSquareFromSquare(pRook.square, -compteur, 0)
-            checkObservedSquare = self.checkObservedSquare(pRook, observedSquare, True, False)
-            if observedSquare != None and checkObservedSquare[0]: movesList.append( (-compteur,0) )
-            if not checkObservedSquare[1]: break
+            if observedSquare != None:
+                checkObservedSquare = self.checkObservedSquare(pRook, observedSquare, True, False, pCheckIfCheck)
+                if checkObservedSquare[0]: movesList.append( (-compteur,0) )
+                if not checkObservedSquare[1]: break
             compteur+=1
 
         compteur = 1
         while( compteur < 8): #I defined the limit to 8 even if it might overflow because once 1 square is overflowing, the loop stops
             observedSquare = self.getSquareFromSquare(pRook.square, 0, compteur)
-            checkObservedSquare = self.checkObservedSquare(pRook, observedSquare, True, False)
-            if observedSquare != None and checkObservedSquare[0]: movesList.append( (0,compteur) )
-            if not checkObservedSquare[1]: break
+            if observedSquare != None:
+                checkObservedSquare = self.checkObservedSquare(pRook, observedSquare, True, False, pCheckIfCheck)
+                if checkObservedSquare[0]: movesList.append( (0,compteur) )
+                if not checkObservedSquare[1]: break
             compteur+=1
 
         compteur = 1
         while( compteur < 8): #I defined the limit to 8 even if it might overflow because once 1 square is overflowing, the loop stops
             observedSquare = self.getSquareFromSquare(pRook.square, 0, -compteur)
-            checkObservedSquare = self.checkObservedSquare(pRook, observedSquare, True, False)
-            if observedSquare != None and checkObservedSquare[0]: movesList.append( (0,-compteur) )
-            if not checkObservedSquare[1]: break
+            if observedSquare != None:
+                checkObservedSquare = self.checkObservedSquare(pRook, observedSquare, True, False, pCheckIfCheck)
+                if checkObservedSquare[0]: movesList.append( (0,-compteur) )
+                if not checkObservedSquare[1]: break
             compteur+=1
 
         return movesList
 
     #linked to findMoves(self, pPiece)
-    def knightMoves(self, pKnight):
+    def knightMoves(self, pKnight, pCheckIfCheck):
         movesList = []
 
         observedSquare = self.getSquareFromSquare(pKnight.square, 1, 2)
-        if observedSquare != None and self.checkObservedSquare(pKnight, observedSquare, True, False)[0]: movesList.append( (1,2) )
+        if observedSquare != None:
+            if self.checkObservedSquare(pKnight, observedSquare, True, False, pCheckIfCheck)[0]: movesList.append( (1,2) )
 
         observedSquare = self.getSquareFromSquare(pKnight.square, 2, 1)
-        if observedSquare != None and self.checkObservedSquare(pKnight, observedSquare, True, False)[0]: movesList.append( (2,1) )
+        if observedSquare != None:
+            if self.checkObservedSquare(pKnight, observedSquare, True, False, pCheckIfCheck)[0]: movesList.append( (2,1) )
 
         observedSquare = self.getSquareFromSquare(pKnight.square, 2, -1)
-        if observedSquare != None and self.checkObservedSquare(pKnight, observedSquare, True, False)[0]: movesList.append( (2,-1) )
+        if observedSquare != None:
+            if self.checkObservedSquare(pKnight, observedSquare, True, False, pCheckIfCheck)[0]: movesList.append( (2,-1) )
 
         observedSquare = self.getSquareFromSquare(pKnight.square, 1, -2)
-        if observedSquare != None and self.checkObservedSquare(pKnight, observedSquare, True, False)[0]: movesList.append( (1,-2) )
+        if observedSquare != None:
+            if self.checkObservedSquare(pKnight, observedSquare, True, False, pCheckIfCheck)[0]: movesList.append( (1,-2) )
 
         observedSquare = self.getSquareFromSquare(pKnight.square, -1, -2)
-        if observedSquare != None and self.checkObservedSquare(pKnight, observedSquare, True, False)[0]: movesList.append( (-1,-2) )
+        if observedSquare != None:
+            if self.checkObservedSquare(pKnight, observedSquare, True, False, pCheckIfCheck)[0]: movesList.append( (-1,-2) )
 
         observedSquare = self.getSquareFromSquare(pKnight.square, -2, -1)
-        if observedSquare != None and self.checkObservedSquare(pKnight, observedSquare, True, False)[0]: movesList.append( (-2,-1) )
+        if observedSquare != None:
+            if self.checkObservedSquare(pKnight, observedSquare, True, False, pCheckIfCheck)[0]: movesList.append( (-2,-1) )
 
         observedSquare = self.getSquareFromSquare(pKnight.square, -2, 1)
-        if observedSquare != None and self.checkObservedSquare(pKnight, observedSquare, True, False)[0]: movesList.append( (-2,1) )
+        if observedSquare != None:
+            if self.checkObservedSquare(pKnight, observedSquare, True, False, pCheckIfCheck)[0]: movesList.append( (-2,1) )
 
         observedSquare = self.getSquareFromSquare(pKnight.square, -1, 2)
-        if observedSquare != None and self.checkObservedSquare(pKnight, observedSquare, True, False)[0]: movesList.append( (-1,2) )
+        if observedSquare != None:
+            if self.checkObservedSquare(pKnight, observedSquare, True, False, pCheckIfCheck)[0]: movesList.append( (-1,2) )
 
         return movesList
 
     #linked to findMoves(self, pPiece)
-    def bishopMoves(self, pBishop):
+    def bishopMoves(self, pBishop, pCheckIfCheck):
         movesList = []
 
         compteur = 1
         while( compteur < 8): #I defined the limit to 8 even if it might overflow because once 1 square is overflowing, the loop stops
             observedSquare = self.getSquareFromSquare(pBishop.square, compteur, compteur)
-            checkObservedSquare = self.checkObservedSquare(pBishop, observedSquare, True, False)
-            if observedSquare != None and checkObservedSquare[0]: movesList.append( (compteur,compteur) )
-            if not checkObservedSquare[1]: break
+            if observedSquare != None:
+                checkObservedSquare = self.checkObservedSquare(pBishop, observedSquare, True, False, pCheckIfCheck)
+                if checkObservedSquare[0]: movesList.append( (compteur,compteur) )
+                if not checkObservedSquare[1]: break
             compteur+=1
 
         compteur = 1
         while( compteur < 8): #I defined the limit to 8 even if it might overflow because once 1 square is overflowing, the loop stops
             observedSquare = self.getSquareFromSquare(pBishop.square, compteur, -compteur)
-            checkObservedSquare = self.checkObservedSquare(pBishop, observedSquare, True, False)
-            if observedSquare != None and checkObservedSquare[0]: movesList.append( (compteur,-compteur) )
-            if not checkObservedSquare[1]: break
+            if observedSquare != None:
+                checkObservedSquare = self.checkObservedSquare(pBishop, observedSquare, True, False, pCheckIfCheck)
+                if checkObservedSquare[0]: movesList.append( (compteur,-compteur) )
+                if not checkObservedSquare[1]: break
             compteur+=1
 
         compteur = 1
         while( compteur < 8): #I defined the limit to 8 even if it might overflow because once 1 square is overflowing, the loop stops
             observedSquare = self.getSquareFromSquare(pBishop.square, -compteur, compteur)
-            checkObservedSquare = self.checkObservedSquare(pBishop, observedSquare, True, False)
-            if observedSquare != None and checkObservedSquare[0]: movesList.append( (-compteur,compteur) )
-            if not checkObservedSquare[1]: break
+            if observedSquare != None:
+                checkObservedSquare = self.checkObservedSquare(pBishop, observedSquare, True, False, pCheckIfCheck)
+                if checkObservedSquare[0]: movesList.append( (-compteur,compteur) )
+                if not checkObservedSquare[1]: break
             compteur+=1
 
         compteur = 1
         while( compteur < 8): #I defined the limit to 8 even if it might overflow because once 1 square is overflowing, the loop stops
             observedSquare = self.getSquareFromSquare(pBishop.square, -compteur, -compteur)
-            checkObservedSquare = self.checkObservedSquare(pBishop, observedSquare, True, False)
-            if observedSquare != None and checkObservedSquare[0]: movesList.append( (-compteur,-compteur) )
-            if not checkObservedSquare[1]: break
+            if observedSquare != None:
+                checkObservedSquare = self.checkObservedSquare(pBishop, observedSquare, True, False, pCheckIfCheck)
+                if checkObservedSquare[0]: movesList.append( (-compteur,-compteur) )
+                if not checkObservedSquare[1]: break
             compteur+=1
 
         return movesList
 
     #linked to findMoves(self, pPiece)
-    def queenMoves(self, pQueen):
-        movesList = self.rookMoves(pQueen) + self.bishopMoves(pQueen)
+    def queenMoves(self, pQueen, pCheckIfCheck):
+        movesList = self.rookMoves(pQueen, pCheckIfCheck) + self.bishopMoves(pQueen, pCheckIfCheck)
         return movesList
 
     #linked to findMoves(self, pPiece)
-    def kingMoves(self, pKing):
+    def kingMoves(self, pKing, pCheckIfCheck):
         movesList = []
         return movesList
 
@@ -355,7 +391,9 @@ class Board:
     #pCanEat define the capability of the piece to 'eat' another piece on the given observeSquare.
     #pNeedsNoPreviousMove is used for certain peice : when it's on true, we check if the piece has move already (king's castling or pawn rush)
     #returns 2 boolean, #1 can go on that square, #2 can continue his way?
-    def checkObservedSquare(self, pPiece, pObservedSquare, pCanEat, pNeedsNoPreviousMove):        
+    def checkObservedSquare(self, pPiece, pObservedSquare, pCanEat, pNeedsNoPreviousMove, pCheckIfCheck):
+        if pCheckIfCheck: 
+            if self.kingInCheck(pPiece, pObservedSquare): return (False, True)
         if pNeedsNoPreviousMove and pPiece.nbMoves != 0: return (False,False)  #for king's castle and pawn's rush
         pieceObservedSquare = self.pieceOnSquare(pObservedSquare)
         if pieceObservedSquare == None: return (True,True)     #check if there a piece on the square, if no, can move

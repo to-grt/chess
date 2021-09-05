@@ -23,11 +23,17 @@ class Piece:
         self.squareIsUnnoccuped()
         self.isAlive = False
         self.square = None
+
+    def pieceSimMoves(self, pNewSquare):
+        self.pieceMoves(pNewSquare)
+        self.nbMoves -= 1
     
     def pieceMoves(self, pNewSquare):
         self.squareIsUnnoccuped()
+        self.square.nbPiece -= 1
         self.nbMoves += 1
         self.square = pNewSquare
+        self.square.nbPiece +=1
         self.squareIsOccuped()
     
     def getInfos(self):
