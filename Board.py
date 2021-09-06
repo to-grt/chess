@@ -144,23 +144,23 @@ class Board:
 
     #prints every quare of the board
     def printBoard(self):
-        n = 25
-        i = 0
-        while i < n:
-            print("-",end="")
-            i+=1
-        print("")
-        for axe in self.squares:
-            for square in axe:
-                print("|", end="")
-                if square.color == "black": print("B|",end="")
-                else: print("W|", end="")
-            print("")
-            i = 0
-            while i < n:
+        x = 0
+        y = 7
+        for y in range(8):
+            for n in range(17):
                 print("-",end="")
-                i+=1
             print("")
+            print("|", end="")
+            for x in range(8):
+                piece = self.pieceOnSquare(self.squares[x][7-y])
+                if piece == None: print(" |", end="")
+                else : print(piece.name[0] + "|", end="")
+            print("")
+
+            
+    def makeMove(self, pPiece, pSquare):
+        pPiece.pieceMoves(pSquare)
+        return
 
     #finds a square from a name
     def findSquare(self, pName):
