@@ -75,18 +75,16 @@ class GameEngine:
                 square = self.waitInput("Select the piece to move by selecting the square\n=> ")
                 if square == None:
                     self.message("That square does not exist lol")
-                    next
+                    continue
                 piece = self.board.pieceOnSquare(square)
                 if piece == None: self.message("No piece on that square duh")
             possibleMoves = self.findMoves(piece)
             self.message("piece selected : " + piece.name)
             destination_square = self.waitInput("Where do yo want to move that piece ?\n=> ")
-            if destination_square == None: next
+            print("destination_square : " + str(destination_square))
+            if destination_square == None:
+                continue
             for possibleMove in possibleMoves:
                 if piece.square.abscissa + possibleMove[0] == destination_square.abscissa and piece.square.ordinate + possibleMove[1] == destination_square.ordinate:
                     self.makeMove(piece, destination_square)
                     player = self.changePlayer(player)
-            print("nexting")
-            next
-            
-
