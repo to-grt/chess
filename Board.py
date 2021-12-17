@@ -389,7 +389,7 @@ class Board:
 
     #this function returns a boolean, true if the piece can go the observedSquare, False otherwise. 
     #pCanEat define the capability of the piece to 'eat' another piece on the given observeSquare.
-    #pNeedsNoPreviousMove is used for certain peice : when it's on true, we check if the piece has move already (king's castling or pawn rush)
+    #pNeedsNoPreviousMove is used for certain piece : when it's on true, we check if the piece has move already (king's castling or pawn rush)
     #returns 2 boolean, #1 can go on that square, #2 can continue his way?
     def checkObservedSquare(self, pPiece, pObservedSquare, pCanEat, pNeedsNoPreviousMove, pCheckIfCheck):
         if pCheckIfCheck: 
