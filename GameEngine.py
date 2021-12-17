@@ -78,6 +78,9 @@ class GameEngine:
                     continue
                 piece = self.board.pieceOnSquare(square)
                 if piece == None: self.message("No piece on that square duh")
+                if piece != None and piece.color != player:
+                    self.message("You cannot select your opponent's pieces")
+                    piece = None
             possibleMoves = self.findMoves(piece)
             self.message("piece selected : " + piece.name)
             destination_square = self.waitInput("Where do yo want to move that piece ?\n=> ")

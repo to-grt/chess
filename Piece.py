@@ -40,7 +40,7 @@ class Piece:
         infos = "my role : " + self.role + "\nmy color : " + self.color + "\nalive : " + str(self.isAlive) + "\nmy square : " + self.square.name + "\n\n"
         return infos
 
-    def definePattern(self):
+    def definePattern(self): #don't remember what that is
 
         list = []
 
