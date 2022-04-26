@@ -80,14 +80,12 @@ class GameEngine:
                     self.message("You cannot select your opponent's pieces")
                     piece = None
             possibleMoves = self.findMoves(piece)
-            print(possibleMoves)
             self.message("piece selected : " + piece.name)
             destination_square = self.waitInput("Where do yo want to move that piece ?\n=> ")
             print("destination_square : " + str(destination_square))
             if destination_square == None:
-                print("you can't move there sir")
+                print("you can't move there !")
                 continue
-            print("now in sim")
             for possibleMove in possibleMoves:
                 if piece.square.abscissa + possibleMove[0] == destination_square.abscissa and piece.square.ordinate + possibleMove[1] == destination_square.ordinate:
                     self.makeMove(piece, destination_square)

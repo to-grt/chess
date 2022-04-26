@@ -186,6 +186,15 @@ class Board:
         return
 
 
+    def simMove(self, pPiece, pSquare):
+
+        enemy = self.pieceOnSquare(pSquare)
+        if enemy != None: enemy.pieceDies()
+        pPiece.pieceSimMoves(pSquare)
+        if enemy != None: return enemy
+        return None
+
+
     #finds a square from a name
     def findSquare(self, pName):
 
@@ -225,9 +234,10 @@ class Board:
     def moveInduceCheck(self, pPiece, pObservedSquare):
 
         memSquare = pPiece.square
-        pPiece.pieceSimMoves(pObservedSquare)
+        enemy = self.simMove(pPiece, pObservedSquare)
         check = self.kingInCheck(pPiece.color)
-        pPiece.pieceSimMoves(memSquare)
+        if enemy != None: enemy.pieceRessurect(pObservedSquare)
+        enemy = self.simMove(pPiece, memSquare)
         if check: return True
         return False
 
@@ -443,19 +453,22 @@ class Board:
                 if index_1 != 0 or index_2 != 0:
                     observedSquare = self.getSquareFromSquare(pKing.square, index_1, index_2)
                     if observedSquare != None:
-                        if self.checkObservedSquare(pKing, observedSquare, False, False, pCheckIfCheck)[0]: movesList.append((index_1, index_2))
+                        if self.checkObservedSquare(pKing, observedSquare, True, False, pCheckIfCheck)[0]: movesList.append((index_1, index_2))
         return movesList
 
-    #this function returns a boolean, true if the piece can go the observedSquare, False otherwise. 
+
+    #this function returns 2 booleans, true if the piece can go the observedSquare, False otherwise. 
     #pCanEat define the capability of the piece to 'eat' another piece on the given observeSquare.
     #pNeedsNoPreviousMove is used for certain piece : when it's on true, we check if the piece has move already (king's castling or pawn rush)
     #returns 2 boolean, #1 can go on that square, #2 can continue his way?
     #  #2 is used for the loop, for example a bishop, is there is a piece taht blocks it, it can not continue his way, loop will then stops
     def checkObservedSquare(self, pPiece, pObservedSquare, pCanEat, pNeedsNoPreviousMove, pCheckIfCheck):
-        if pCheckIfCheck: 
+        pieceObservedSquare = self.pieceOnSquare(pObservedSquare)
+        if pieceObservedSquare != None:
+            if pieceObservedSquare.color == pPiece.color: return (False, False)
+        if pCheckIfCheck:
             if self.moveInduceCheck(pPiece, pObservedSquare): return (False, True)
         if pNeedsNoPreviousMove and pPiece.nbMoves != 0: return (False,False)  #for king's castle and pawn's rush
-        pieceObservedSquare = self.pieceOnSquare(pObservedSquare)
         if pieceObservedSquare == None: return (True,True)     #check if there a piece on the square, if no, can move
         if pieceObservedSquare.color == pPiece.color or not pCanEat: return (False, False)      #check if the piece on the square has the same color or if the pieceObserved can eat, if so, can't move
         else: return (True,False)     #here, the piece can eat, and the observedPiece hasnt the same color
