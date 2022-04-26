@@ -67,7 +67,6 @@ class GameEngine:
             piece= None
             self.cls()
             self.printBoard()
-
             if self.board.kingInCheck(player): self.message('CHECKKK')
             self.message(player + " to move !")
             while piece == None:

@@ -15,15 +15,16 @@ class Piece:
 
     def pieceDies(self):
         self.square.isOccuped = False
+        self.square.nbPiece -= 1
         self.isAlive = False
         self.square = None
 
     
     # like pieceMoves but without the occupation changements and the number of move, only for simulation of checks and mate
     def pieceSimMoves(self, pNewSquare):
-        #self.square.nbPiece -= 1   # might want to add that if problems with checks
+        self.square.nbPiece -= 1   # might want to add that if problems with checks
         self.square = pNewSquare
-        #self.square.nbPiece +=1
+        self.square.nbPiece +=1
     
 
     def pieceMoves(self, pNewSquare):

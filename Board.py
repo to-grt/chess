@@ -138,6 +138,10 @@ class Board:
         pieces.append( Piece("BB2", "bishop",   "black", True, self.squares[5][7]) )
         pieces.append( Piece("CB2", "knight",   "black", True, self.squares[6][7]) )
         pieces.append( Piece("RB2", "rook",     "black", True, self.squares[7][7]) )
+
+        for piece in pieces:
+            piece.square.nbPiece = 1
+
         return pieces
 
 
