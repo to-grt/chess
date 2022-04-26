@@ -230,7 +230,10 @@ class Board:
         elif pPiece.role == "king":
             return self.kingMoves(pPiece, checkIfCheck)
 
-    #linked to findMoves(self, pPiece)
+    # as a reminder: definition of checkObservedSquare: 
+    # 
+    # checkObservedSquare(self, pPiece, pObservedSquare, pCanEat, pNeedsNoPreviousMove, pCheckIfCheck):
+    # linked to findMoves(self, pPiece)
     def pawnMoves(self, pPawn, pCheckIfCheck):
         if pPawn.color == "white": signColor = 1
         else: signColor = -1
@@ -260,7 +263,7 @@ class Board:
         movesList = []
 
         compteur = 1
-        while(compteur < 8): #I defined the limit to 8 even if it might overflow because once 1 square is overflowing, the loop stops
+        while(compteur < 8): # I defined the limit to 8 even if it might overflow because once 1 square is overflowing, the loop stops
             observedSquare = self.getSquareFromSquare(pRook.square, compteur, 0)
             if observedSquare != None:
                 checkObservedSquare = self.checkObservedSquare(pRook, observedSquare, True, False, pCheckIfCheck)
@@ -269,7 +272,7 @@ class Board:
             compteur+=1
 
         compteur = 1
-        while( compteur < 8): #I defined the limit to 8 even if it might overflow because once 1 square is overflowing, the loop stops
+        while(compteur < 8): # I defined the limit to 8 even if it might overflow because once 1 square is overflowing, the loop stops
             observedSquare = self.getSquareFromSquare(pRook.square, -compteur, 0)
             if observedSquare != None:
                 checkObservedSquare = self.checkObservedSquare(pRook, observedSquare, True, False, pCheckIfCheck)
@@ -278,7 +281,7 @@ class Board:
             compteur+=1
 
         compteur = 1
-        while( compteur < 8): #I defined the limit to 8 even if it might overflow because once 1 square is overflowing, the loop stops
+        while(compteur < 8): # I defined the limit to 8 even if it might overflow because once 1 square is overflowing, the loop stops
             observedSquare = self.getSquareFromSquare(pRook.square, 0, compteur)
             if observedSquare != None:
                 checkObservedSquare = self.checkObservedSquare(pRook, observedSquare, True, False, pCheckIfCheck)
@@ -287,7 +290,7 @@ class Board:
             compteur+=1
 
         compteur = 1
-        while( compteur < 8): #I defined the limit to 8 even if it might overflow because once 1 square is overflowing, the loop stops
+        while(compteur < 8): # I defined the limit to 8 even if it might overflow because once 1 square is overflowing, the loop stops
             observedSquare = self.getSquareFromSquare(pRook.square, 0, -compteur)
             if observedSquare != None:
                 checkObservedSquare = self.checkObservedSquare(pRook, observedSquare, True, False, pCheckIfCheck)
@@ -340,7 +343,7 @@ class Board:
         movesList = []
 
         compteur = 1
-        while( compteur < 8): #I defined the limit to 8 even if it might overflow because once 1 square is overflowing, the loop stops
+        while(compteur < 8): #I defined the limit to 8 even if it might overflow because once 1 square is overflowing, the loop stops
             observedSquare = self.getSquareFromSquare(pBishop.square, compteur, compteur)
             if observedSquare != None:
                 checkObservedSquare = self.checkObservedSquare(pBishop, observedSquare, True, False, pCheckIfCheck)
@@ -349,7 +352,7 @@ class Board:
             compteur+=1
 
         compteur = 1
-        while( compteur < 8): #I defined the limit to 8 even if it might overflow because once 1 square is overflowing, the loop stops
+        while(compteur < 8): #I defined the limit to 8 even if it might overflow because once 1 square is overflowing, the loop stops
             observedSquare = self.getSquareFromSquare(pBishop.square, compteur, -compteur)
             if observedSquare != None:
                 checkObservedSquare = self.checkObservedSquare(pBishop, observedSquare, True, False, pCheckIfCheck)
@@ -358,7 +361,7 @@ class Board:
             compteur+=1
 
         compteur = 1
-        while( compteur < 8): #I defined the limit to 8 even if it might overflow because once 1 square is overflowing, the loop stops
+        while(compteur < 8): #I defined the limit to 8 even if it might overflow because once 1 square is overflowing, the loop stops
             observedSquare = self.getSquareFromSquare(pBishop.square, -compteur, compteur)
             if observedSquare != None:
                 checkObservedSquare = self.checkObservedSquare(pBishop, observedSquare, True, False, pCheckIfCheck)
@@ -367,7 +370,7 @@ class Board:
             compteur+=1
 
         compteur = 1
-        while( compteur < 8): #I defined the limit to 8 even if it might overflow because once 1 square is overflowing, the loop stops
+        while(compteur < 8): #I defined the limit to 8 even if it might overflow because once 1 square is overflowing, the loop stops
             observedSquare = self.getSquareFromSquare(pBishop.square, -compteur, -compteur)
             if observedSquare != None:
                 checkObservedSquare = self.checkObservedSquare(pBishop, observedSquare, True, False, pCheckIfCheck)

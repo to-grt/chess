@@ -82,6 +82,7 @@ class GameEngine:
                     self.message("You cannot select your opponent's pieces")
                     piece = None
             possibleMoves = self.findMoves(piece)
+            print(possibleMoves)
             self.message("piece selected : " + piece.name)
             destination_square = self.waitInput("Where do yo want to move that piece ?\n=> ")
             print("destination_square : " + str(destination_square))
