@@ -172,9 +172,12 @@ class Board:
                 else : print(piece.name[0] + "|", end="")
             print("")
 
-            
+
+    # make the designated move and destroy the enemy piece if there is one
     def makeMove(self, pPiece, pSquare):
 
+        enemy = self.pieceOnSquare(pSquare)
+        if enemy != None: enemy.pieceDies()
         pPiece.pieceMoves(pSquare)
         return
 
@@ -213,25 +216,30 @@ class Board:
         for piece in self.pieces:
             if piece.square == pSquare: return piece
         return None
-    
 
-    def kingInCheck(self, pPiece, pObservedSquare):
 
-        if pPiece.color == "white": king = self.pieces[12]                            
-        else : king = self.pieces[28]
+    def moveInduceCheck(self, pPiece, pObservedSquare):
 
         memSquare = pPiece.square
-        #print("right before 1\n" + pPiece.name + " : " + str(pPiece.square.abscissa) + "," + str(pPiece.square.ordinate) + " => " + str(pObservedSquare))
         pPiece.pieceSimMoves(pObservedSquare)
+        check = self.kingInCheck(pPiece.color)
+        pPiece.pieceSimMoves(memSquare)
+        if check: return True
+        return False
+
+
+    def kingInCheck(self, color):
+
+        if color == "white": king = self.pieces[12]                            
+        else : king = self.pieces[28]
 
         for piece in self.pieces:
-            if piece.color != pPiece.color and piece.square.nbPiece == 1:
+            if not piece.isAlive: continue
+            if piece.color != color and piece.square.nbPiece == 1:
                 moves = self.findMoves(piece, False)
                 for move in moves:
-                    if piece.square.abscissa + move[0] == king.square.abscissa and piece.square.ordinate + move[1] == king.square.ordinate: 
-                        pPiece.pieceSimMoves(memSquare)
+                    if piece.square.abscissa + move[0] == king.square.abscissa and piece.square.ordinate + move[1] == king.square.ordinate:
                         return True
-        pPiece.pieceSimMoves(memSquare)
         return False
 
 
@@ -441,7 +449,7 @@ class Board:
     #  #2 is used for the loop, for example a bishop, is there is a piece taht blocks it, it can not continue his way, loop will then stops
     def checkObservedSquare(self, pPiece, pObservedSquare, pCanEat, pNeedsNoPreviousMove, pCheckIfCheck):
         if pCheckIfCheck: 
-            if self.kingInCheck(pPiece, pObservedSquare): return (False, True)
+            if self.moveInduceCheck(pPiece, pObservedSquare): return (False, True)
         if pNeedsNoPreviousMove and pPiece.nbMoves != 0: return (False,False)  #for king's castle and pawn's rush
         pieceObservedSquare = self.pieceOnSquare(pObservedSquare)
         if pieceObservedSquare == None: return (True,True)     #check if there a piece on the square, if no, can move

@@ -67,9 +67,8 @@ class GameEngine:
             piece= None
             self.cls()
             self.printBoard()
-            if player == "white": king = self.board.pieces[12]
-            else : king = self.board.pieces[28]
-            if self.board.kingInCheck(king, king.square): self.message('CHECKKK')
+
+            if self.board.kingInCheck(player): self.message('CHECKKK')
             self.message(player + " to move !")
             while piece == None:
                 square = self.waitInput("Select the piece to move by selecting the square\n=> ")

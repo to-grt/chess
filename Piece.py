@@ -14,7 +14,7 @@ class Piece:
 
 
     def pieceDies(self):
-        self.squareIsUnnoccuped()
+        self.square.isOccuped = False
         self.isAlive = False
         self.square = None
 
