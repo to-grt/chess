@@ -142,6 +142,14 @@ class Board:
         for piece in self.pieces:
             print( piece.name, " : my infos are :\n", piece.getInfos() )
 
+
+    def print_board_occupation(self):
+        for row in self.squares:
+            for square in row:
+                print("square.name: ", square.name)
+                print("square.occupation: ", square.isOccuped)
+
+
     #prints every quare of the board
     def printBoard(self):
         x = 0
@@ -167,7 +175,7 @@ class Board:
         for axe in self.squares:
             for square in axe:
                 if pName == square.name:
-                    return self.squares[axe][square]
+                    return square
     
     #returns a square from coordinates
     def getSquareFromCoords(self, pAbscissa, pOrdinate):
@@ -192,7 +200,7 @@ class Board:
     
     def kingInCheck(self, pPiece, pObservedSquare):
 
-        if pPiece.color == "white": king = self.pieces[12]
+        if pPiece.color == "white": king = self.pieces[12]                            
         else : king = self.pieces[28]
 
         memSquare = pPiece.square
@@ -249,6 +257,16 @@ class Board:
                 if self.checkObservedSquare(pPawn, observedSquare, False, True, pCheckIfCheck)[0]: movesList.append( (0,signColor*2) )
 
         observedSquare = self.getSquareFromSquare(pPawn.square, -1, signColor*1)
+        pieceObservedSquare = self.pieceOnSquare(observedSquare)
+        if pieceObservedSquare != None: 
+            d7 = self.findSquare("d7")
+            print("d7 occupation: ", d7.isOccuped)
+            print("square: ", observedSquare.name)
+            print("square.isOccuped: ", observedSquare.isOccuped)
+            print("checkObservedSquare: ", self.checkObservedSquare(pPawn, observedSquare, True, False, pCheckIfCheck)[0])
+            print("square.isOccuped: ", observedSquare.isOccuped)
+            print("piece on it: ", pieceObservedSquare.name)
+
         if observedSquare != None:
             if self.checkObservedSquare(pPawn, observedSquare, True, False, pCheckIfCheck)[0] and observedSquare.isOccuped: movesList.append( (-1,signColor*1) )
 
@@ -394,6 +412,7 @@ class Board:
     #pCanEat define the capability of the piece to 'eat' another piece on the given observeSquare.
     #pNeedsNoPreviousMove is used for certain piece : when it's on true, we check if the piece has move already (king's castling or pawn rush)
     #returns 2 boolean, #1 can go on that square, #2 can continue his way?
+    #  #2 is used for the loop, for example a bishop, is there is a piece taht blocks it, it can not continue his way, loop will then stops
     def checkObservedSquare(self, pPiece, pObservedSquare, pCanEat, pNeedsNoPreviousMove, pCheckIfCheck):
         if pCheckIfCheck: 
             if self.kingInCheck(pPiece, pObservedSquare): return (False, True)
@@ -402,5 +421,3 @@ class Board:
         if pieceObservedSquare == None: return (True,True)     #check if there a piece on the square, if no, can move
         if pieceObservedSquare.color == pPiece.color or not pCanEat: return (False, False)      #check if the piece on the square has the same color or if the pieceObserved can eat, if so, can't move
         else: return (True,False)     #here, the piece can eat, and the observedPiece hasnt the same color
-
-

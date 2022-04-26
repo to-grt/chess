@@ -3,7 +3,6 @@ from Square import Square
 class Piece:
 
     def __init__(self, pName, pRole, pColor, pIsAlive, pSquare):
-
         self.name =     pName
         self.role =     pRole
         self.color =    pColor
@@ -11,36 +10,37 @@ class Piece:
         self.square =   pSquare
         self.nbMoves =  0
         self.movePattern = self.definePattern()
-        self.squareIsOccuped()
-
-    def squareIsOccuped(self):      # when a piece is moved
         self.square.isOccuped = True
-    
-    def squareIsUnnoccuped(self):   # when a piece leave a square
-        self.square.isOccuped = False
+
 
     def pieceDies(self):
         self.squareIsUnnoccuped()
         self.isAlive = False
         self.square = None
 
-    def pieceSimMoves(self, pNewSquare):
-        self.pieceMoves(pNewSquare)
-        self.nbMoves -= 1
     
+    # like pieceMoves but without the occupation changements and the number of move, only for simulation of checks and mate
+    def pieceSimMoves(self, pNewSquare):
+        #self.square.nbPiece -= 1   # might want to add that if problems with checks
+        self.square = pNewSquare
+        #self.square.nbPiece +=1
+    
+
     def pieceMoves(self, pNewSquare):
-        self.squareIsUnnoccuped()
+        self.square.isOccuped = False
         self.square.nbPiece -= 1
         self.nbMoves += 1
         self.square = pNewSquare
         self.square.nbPiece +=1
-        self.squareIsOccuped()
+        self.square.isOccuped = True
+
     
     def getInfos(self):
         infos = "my role : " + self.role + "\nmy color : " + self.color + "\nalive : " + str(self.isAlive) + "\nmy square : " + self.square.name + "\n\n"
         return infos
 
-    def definePattern(self): # don't remember what that is
+
+    def definePattern(self): # don't remember what that is probably useless now
 
         list = []
 
@@ -53,7 +53,6 @@ class Piece:
             return list
 
         elif self.role == "knight":
-
             return list
 
         elif self.role == "bishop":
@@ -63,9 +62,4 @@ class Piece:
             return list
 
         elif self.role == "king":
-            return list
-
-
-
-
-    
+            return list  
