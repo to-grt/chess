@@ -4,11 +4,14 @@ from Piece import Piece
 class Board:
 
     def __init__(self):
+
         self.squares = self.createBoard()
         self.pieces =   self.createPieces()
 
+
     #creates every square of the board cf Square.py
     def createBoard(self):
+
         squares = [[0 for x in range(8)] for y in range(8)]
 
         #column A
@@ -93,6 +96,7 @@ class Board:
 
         return squares
 
+
     #creates every piece od the board, cf Piece.py
     def createPieces(self):
 
@@ -136,6 +140,7 @@ class Board:
         pieces.append( Piece("RB2", "rook",     "black", True, self.squares[7][7]) )
         return pieces
 
+
     #prints every piece of the board (dead or alive)
     def printAllPieces(self):
 
@@ -144,6 +149,7 @@ class Board:
 
 
     def print_board_occupation(self):
+
         for row in self.squares:
             for square in row:
                 print("square.name: ", square.name)
@@ -152,6 +158,7 @@ class Board:
 
     #prints every quare of the board
     def printBoard(self):
+
         x = 0
         y = 7
         for y in range(8):
@@ -167,24 +174,31 @@ class Board:
 
             
     def makeMove(self, pPiece, pSquare):
+
         pPiece.pieceMoves(pSquare)
         return
 
+
     #finds a square from a name
     def findSquare(self, pName):
+
         for axe in self.squares:
             for square in axe:
                 if pName == square.name:
                     return square
     
+
     #returns a square from coordinates
     def getSquareFromCoords(self, pAbscissa, pOrdinate):
+
         return self.squares[pAbscissa-1][pOrdinate-1]
+
 
     #this function is quite useful, it allows to get a new square from a specific square, a x deviation and a y deviation for exemple:
     #  input =>  square A1, 1, 1   output => square b2
     #return None otherwise
     def getSquareFromSquare(self, pSquare, pX, pY):
+
         x = pSquare.abscissa
         y = pSquare.ordinate
         xFinal = x + pX
@@ -192,12 +206,15 @@ class Board:
         if( xFinal <= 0 or xFinal > 8 or yFinal <= 0 or yFinal > 8): return None
         else: return self.getSquareFromCoords(xFinal, yFinal)
 
+
     #returns a the piece present on the given square, otherwise, returns None
     def pieceOnSquare(self, pSquare):
+
         for piece in self.pieces:
             if piece.square == pSquare: return piece
         return None
     
+
     def kingInCheck(self, pPiece, pObservedSquare):
 
         if pPiece.color == "white": king = self.pieces[12]                            
@@ -216,6 +233,7 @@ class Board:
                         return True
         pPiece.pieceSimMoves(memSquare)
         return False
+
 
     #Finds the moves for a given piece, checkIfCheck diferenciate we check if the move include own-king check
     def findMoves(self, pPiece, checkIfCheck):
@@ -243,6 +261,7 @@ class Board:
     # checkObservedSquare(self, pPiece, pObservedSquare, pCanEat, pNeedsNoPreviousMove, pCheckIfCheck):
     # linked to findMoves(self, pPiece)
     def pawnMoves(self, pPawn, pCheckIfCheck):
+
         if pPawn.color == "white": signColor = 1
         else: signColor = -1
         movesList = []
@@ -257,16 +276,6 @@ class Board:
                 if self.checkObservedSquare(pPawn, observedSquare, False, True, pCheckIfCheck)[0]: movesList.append( (0,signColor*2) )
 
         observedSquare = self.getSquareFromSquare(pPawn.square, -1, signColor*1)
-        pieceObservedSquare = self.pieceOnSquare(observedSquare)
-        if pieceObservedSquare != None: 
-            d7 = self.findSquare("d7")
-            print("d7 occupation: ", d7.isOccuped)
-            print("square: ", observedSquare.name)
-            print("square.isOccuped: ", observedSquare.isOccuped)
-            print("checkObservedSquare: ", self.checkObservedSquare(pPawn, observedSquare, True, False, pCheckIfCheck)[0])
-            print("square.isOccuped: ", observedSquare.isOccuped)
-            print("piece on it: ", pieceObservedSquare.name)
-
         if observedSquare != None:
             if self.checkObservedSquare(pPawn, observedSquare, True, False, pCheckIfCheck)[0] and observedSquare.isOccuped: movesList.append( (-1,signColor*1) )
 
@@ -276,8 +285,10 @@ class Board:
 
         return movesList
 
+
     #linked to findMoves(self, pPiece)
     def rookMoves(self, pRook, pCheckIfCheck):
+
         movesList = []
 
         compteur = 1
@@ -318,8 +329,10 @@ class Board:
 
         return movesList
 
+
     #linked to findMoves(self, pPiece)
     def knightMoves(self, pKnight, pCheckIfCheck):
+
         movesList = []
 
         observedSquare = self.getSquareFromSquare(pKnight.square, 1, 2)
@@ -356,8 +369,10 @@ class Board:
 
         return movesList
 
+
     #linked to findMoves(self, pPiece)
     def bishopMoves(self, pBishop, pCheckIfCheck):
+
         movesList = []
 
         compteur = 1
@@ -398,14 +413,25 @@ class Board:
 
         return movesList
 
+
     #linked to findMoves(self, pPiece)
     def queenMoves(self, pQueen, pCheckIfCheck):
+
         movesList = self.rookMoves(pQueen, pCheckIfCheck) + self.bishopMoves(pQueen, pCheckIfCheck)
         return movesList
 
+
     #linked to findMoves(self, pPiece)
     def kingMoves(self, pKing, pCheckIfCheck):
+
         movesList = []
+        list_three = [-1, 0, 1]
+        for index_1 in list_three:
+            for index_2 in list_three:
+                if index_1 != 0 or index_2 != 0:
+                    observedSquare = self.getSquareFromSquare(pKing.square, index_1, index_2)
+                    if observedSquare != None:
+                        if self.checkObservedSquare(pKing, observedSquare, False, False, pCheckIfCheck)[0]: movesList.append((index_1, index_2))
         return movesList
 
     #this function returns a boolean, true if the piece can go the observedSquare, False otherwise. 
