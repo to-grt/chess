@@ -4,8 +4,13 @@ import os
 class GameEngine:
 
     def __init__(self):
+        return
 
-        self.board =    Board()
+
+    def reset(self):
+
+        self.board = Board()
+
 
     def printAllSquares(self):
 
@@ -13,8 +18,10 @@ class GameEngine:
             for square in axe:
                 print( square.name, " : my infos are : \n", square.getInfos() )
 
+
     def printBoard(self):
         self.board.printBoard()
+
 
     def switch_column(self, pColumn):
         if pColumn == 'a': return 1
@@ -59,6 +66,7 @@ class GameEngine:
 
     def gameLoop(self):
 
+        self.reset() # setting up a new board
         end = False
         player = "white"
 
@@ -67,7 +75,11 @@ class GameEngine:
             piece= None
             self.cls()
             self.printBoard()
-            if self.board.kingInCheck(player): self.message('CHECKKK')
+            if self.board.kingInCheck(player):
+                self.message('CHECKKK')
+                if self.board.kingInMate(player):
+                    print("and mate... ", player, " has lost the game")
+                    break
             self.message(player + " to move !")
             while piece == None:
                 square = self.waitInput("Select the piece to move by selecting the square\n=> ")
@@ -90,3 +102,8 @@ class GameEngine:
                 if piece.square.abscissa + possibleMove[0] == destination_square.abscissa and piece.square.ordinate + possibleMove[1] == destination_square.ordinate:
                     self.makeMove(piece, destination_square)
                     player = self.changePlayer(player)
+        
+        answer = input("\n\nEnd of the game, if you want to restart a new game, type 'again':\n=> ").lower()
+        print("answer is: ", answer)
+        if answer == "again": return True
+        return False

@@ -257,6 +257,20 @@ class Board:
         return False
 
 
+    def kingInMate(self, color):
+
+        if color == "white": king = self.pieces[12]                            
+        else : king = self.pieces[28]
+
+        for piece in self.pieces:
+            if not piece.isAlive or piece.color != color: continue
+            moves = self.findMoves(piece, True)
+            if moves != []:
+                print("piece defleting is: ", piece.name, "  its moves are: ", moves)
+                return False
+        return True
+
+
     #Finds the moves for a given piece, checkIfCheck diferenciate we check if the move include own-king check
     def findMoves(self, pPiece, checkIfCheck):
        
