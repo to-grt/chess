@@ -1,9 +1,12 @@
 from Board import Board
 import os
 
+
 class GameEngine:
 
+
     def __init__(self):
+
         return
 
 
@@ -20,10 +23,12 @@ class GameEngine:
 
 
     def printBoard(self):
+
         self.board.printBoard()
 
 
     def switch_column(self, pColumn):
+
         if pColumn == 'a': return 1
         elif pColumn == 'b': return 2
         elif pColumn == 'c': return 3
@@ -34,10 +39,14 @@ class GameEngine:
         elif pColumn == 'h': return 8
         else: return None
 
+
     def cls(self):
+
         os.system('cls' if os.name=='nt' else 'clear')
 
+
     def waitInput(self, pMessage):
+
         square = input(pMessage).lower()
         if len(square) != 2: return None
         column = square[0]
@@ -50,19 +59,28 @@ class GameEngine:
         final_square = self.board.getSquareFromCoords(column, lign)
         return final_square
 
+
     def findMoves(self, pPiece):
+
         return self.board.findMoves(pPiece, True)
 
+
     def changePlayer(self, pPlayer):
+
         if( pPlayer == "white"): return "black"
         else: return "white"
 
+
     def makeMove(self, pPiece, pSquare):
+
         self.board.makeMove(pPiece, pSquare)
         return
 
+
     def message(self, pString):
+
         print(pString)
+
 
     def gameLoop(self):
 

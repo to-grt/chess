@@ -1,7 +1,9 @@
 from Square import Square
 from Piece import Piece
 
+
 class Board:
+
 
     def __init__(self):
 
@@ -292,6 +294,7 @@ class Board:
         elif pPiece.role == "king":
             return self.kingMoves(pPiece, checkIfCheck)
 
+
     # as a reminder: definition of checkObservedSquare: 
     # 
     # checkObservedSquare(self, pPiece, pObservedSquare, pCanEat, pNeedsNoPreviousMove, pCheckIfCheck):
@@ -477,6 +480,7 @@ class Board:
     #returns 2 boolean, #1 can go on that square, #2 can continue his way?
     #  #2 is used for the loop, for example a bishop, is there is a piece taht blocks it, it can not continue his way, loop will then stops
     def checkObservedSquare(self, pPiece, pObservedSquare, pCanEat, pNeedsNoPreviousMove, pCheckIfCheck):
+        
         pieceObservedSquare = self.pieceOnSquare(pObservedSquare)
         if pieceObservedSquare != None:
             if pieceObservedSquare.color == pPiece.color: return (False, False)
