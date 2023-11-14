@@ -1,4 +1,7 @@
 # chess
+A not finished (and never will) chess game, check my reps for a newest version
+
+---
 First of all, a chess game, then maybe an AI - Python
 
 <br/>
